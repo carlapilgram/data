@@ -15,33 +15,36 @@ This is an R Markdown document. Markdown is a simple formatting syntax for autho
 
 When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
+
+
 ```{r}
-head(UCBAdmissions)
-colnames(UCBAdmissions)
-rownames(UCBAdmissions)
-UCB_df <- as.data.frame(UCBAdmissions)
+library(tidyverse)
 
-
-library(dplyr)
-UCB_df %>%
-  filter(Gender == "Female", Dept == "B", Admit == "Rejected")
-# Load necessary library
-library(dplyr)
-
-# Define the function
-transform_ucb_data <- function(data) {
-  # Convert table to data frame
-  data_df <- as.data.frame(data)
-  
-  # Group by department and gender, summarize admissions
-  data_df %>%
-    group_by(Dept, Gender) %>%
-    summarise(Total_Admissions = sum(Freq[Admit == "Admitted"]))
+# Define a function to double all numeric values in the dataset
+double_data <- function(data) {
+  data[] <- lapply(data, function(x) if (is.numeric(x)) x * 2 else x)
+  return(data)
 }
 
-# Use the function on UCBAdmissions
-data("UCBAdmissions")
-transform_ucb_data(UCBAdmissions)
+# Apply the function to a dataset (UCBAdmissions)
+ucb_data <- as.data.frame(UCBAdmissions)
+doubled_data <- double_data(ucb_data)
+doubled_data
+
+
+
+#MODIFIED
+
+# Add a second transformation function
+add_constant <- function(data, constant = 5) {
+  data[] <- lapply(data, function(x) if (is.numeric(x)) x + constant else x)
+  return(data)
+}
+
+# Apply the new function to the dataset
+modified_data <- add_constant(ucb_data)
+modified_data
+
 
 ```
 

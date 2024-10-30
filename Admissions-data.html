@@ -366,103 +366,88 @@ on using R Markdown see <a href="http://rmarkdown.rstudio.com" class="uri">http:
 generated that includes both content as well as the output of any
 embedded R code chunks within the document. You can embed an R code
 chunk like this:</p>
-<pre class="r"><code>head(UCBAdmissions)</code></pre>
-<pre><code>## , , Dept = A
-## 
-##           Gender
-## Admit      Male Female
-##   Admitted  512     89
-##   Rejected  313     19
-## 
-## , , Dept = B
-## 
-##           Gender
-## Admit      Male Female
-##   Admitted  353     17
-##   Rejected  207      8
-## 
-## , , Dept = C
-## 
-##           Gender
-## Admit      Male Female
-##   Admitted  120    202
-##   Rejected  205    391
-## 
-## , , Dept = D
-## 
-##           Gender
-## Admit      Male Female
-##   Admitted  138    131
-##   Rejected  279    244
-## 
-## , , Dept = E
-## 
-##           Gender
-## Admit      Male Female
-##   Admitted   53     94
-##   Rejected  138    299
-## 
-## , , Dept = F
-## 
-##           Gender
-## Admit      Male Female
-##   Admitted   22     24
-##   Rejected  351    317</code></pre>
-<pre class="r"><code>colnames(UCBAdmissions)</code></pre>
-<pre><code>## [1] &quot;Male&quot;   &quot;Female&quot;</code></pre>
-<pre class="r"><code>rownames(UCBAdmissions)</code></pre>
-<pre><code>## [1] &quot;Admitted&quot; &quot;Rejected&quot;</code></pre>
-<pre class="r"><code>UCB_df &lt;- as.data.frame(UCBAdmissions)
-
-
-library(dplyr)</code></pre>
-<pre><code>## 
-## Adjuntando el paquete: &#39;dplyr&#39;</code></pre>
-<pre><code>## The following objects are masked from &#39;package:stats&#39;:
-## 
-##     filter, lag</code></pre>
-<pre><code>## The following objects are masked from &#39;package:base&#39;:
-## 
-##     intersect, setdiff, setequal, union</code></pre>
-<pre class="r"><code>UCB_df %&gt;%
-  filter(Gender == &quot;Female&quot;, Dept == &quot;B&quot;, Admit == &quot;Rejected&quot;)</code></pre>
-<pre><code>##      Admit Gender Dept Freq
-## 1 Rejected Female    B    8</code></pre>
-<pre class="r"><code># Load necessary library
-library(dplyr)
-
-# Define the function
-transform_ucb_data &lt;- function(data) {
-  # Convert table to data frame
-  data_df &lt;- as.data.frame(data)
-  
-  # Group by department and gender, summarize admissions
-  data_df %&gt;%
-    group_by(Dept, Gender) %&gt;%
-    summarise(Total_Admissions = sum(Freq[Admit == &quot;Admitted&quot;]))
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+## ✔ dplyr     1.1.4     ✔ readr     2.1.5
+## ✔ forcats   1.0.0     ✔ stringr   1.5.1
+## ✔ ggplot2   3.5.1     ✔ tibble    3.2.1
+## ✔ lubridate 1.9.3     ✔ tidyr     1.3.1
+## ✔ purrr     1.0.2     
+## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()
+## ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+<pre class="r"><code># Define a function to double all numeric values in the dataset
+double_data &lt;- function(data) {
+  data[] &lt;- lapply(data, function(x) if (is.numeric(x)) x * 2 else x)
+  return(data)
 }
 
-# Use the function on UCBAdmissions
-data(&quot;UCBAdmissions&quot;)
-transform_ucb_data(UCBAdmissions)</code></pre>
-<pre><code>## `summarise()` has grouped output by &#39;Dept&#39;. You can override using the
-## `.groups` argument.</code></pre>
-<pre><code>## # A tibble: 12 × 3
-## # Groups:   Dept [6]
-##    Dept  Gender Total_Admissions
-##    &lt;fct&gt; &lt;fct&gt;             &lt;dbl&gt;
-##  1 A     Male                512
-##  2 A     Female               89
-##  3 B     Male                353
-##  4 B     Female               17
-##  5 C     Male                120
-##  6 C     Female              202
-##  7 D     Male                138
-##  8 D     Female              131
-##  9 E     Male                 53
-## 10 E     Female               94
-## 11 F     Male                 22
-## 12 F     Female               24</code></pre>
+# Apply the function to a dataset (UCBAdmissions)
+ucb_data &lt;- as.data.frame(UCBAdmissions)
+doubled_data &lt;- double_data(ucb_data)
+doubled_data</code></pre>
+<pre><code>##       Admit Gender Dept Freq
+## 1  Admitted   Male    A 1024
+## 2  Rejected   Male    A  626
+## 3  Admitted Female    A  178
+## 4  Rejected Female    A   38
+## 5  Admitted   Male    B  706
+## 6  Rejected   Male    B  414
+## 7  Admitted Female    B   34
+## 8  Rejected Female    B   16
+## 9  Admitted   Male    C  240
+## 10 Rejected   Male    C  410
+## 11 Admitted Female    C  404
+## 12 Rejected Female    C  782
+## 13 Admitted   Male    D  276
+## 14 Rejected   Male    D  558
+## 15 Admitted Female    D  262
+## 16 Rejected Female    D  488
+## 17 Admitted   Male    E  106
+## 18 Rejected   Male    E  276
+## 19 Admitted Female    E  188
+## 20 Rejected Female    E  598
+## 21 Admitted   Male    F   44
+## 22 Rejected   Male    F  702
+## 23 Admitted Female    F   48
+## 24 Rejected Female    F  634</code></pre>
+<pre class="r"><code>#MODIFIED
+
+# Add a second transformation function
+add_constant &lt;- function(data, constant = 5) {
+  data[] &lt;- lapply(data, function(x) if (is.numeric(x)) x + constant else x)
+  return(data)
+}
+
+# Apply the new function to the dataset
+modified_data &lt;- add_constant(ucb_data)
+modified_data</code></pre>
+<pre><code>##       Admit Gender Dept Freq
+## 1  Admitted   Male    A  517
+## 2  Rejected   Male    A  318
+## 3  Admitted Female    A   94
+## 4  Rejected Female    A   24
+## 5  Admitted   Male    B  358
+## 6  Rejected   Male    B  212
+## 7  Admitted Female    B   22
+## 8  Rejected Female    B   13
+## 9  Admitted   Male    C  125
+## 10 Rejected   Male    C  210
+## 11 Admitted Female    C  207
+## 12 Rejected Female    C  396
+## 13 Admitted   Male    D  143
+## 14 Rejected   Male    D  284
+## 15 Admitted Female    D  136
+## 16 Rejected Female    D  249
+## 17 Admitted   Male    E   58
+## 18 Rejected   Male    E  143
+## 19 Admitted Female    E   99
+## 20 Rejected Female    E  304
+## 21 Admitted   Male    F   27
+## 22 Rejected   Male    F  356
+## 23 Admitted Female    F   29
+## 24 Rejected Female    F  322</code></pre>
 </div>
 <div id="including-plots" class="section level2">
 <h2>Including Plots</h2>
