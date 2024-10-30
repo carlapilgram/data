@@ -1,0 +1,56 @@
+---
+title: "acceptance"
+author: "Carla Pilgram"
+date: "2024-10-30"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r}
+head(UCBAdmissions)
+colnames(UCBAdmissions)
+rownames(UCBAdmissions)
+UCB_df <- as.data.frame(UCBAdmissions)
+
+
+library(dplyr)
+UCB_df %>%
+  filter(Gender == "Female", Dept == "B", Admit == "Rejected")
+# Load necessary library
+library(dplyr)
+
+# Define the function
+transform_ucb_data <- function(data) {
+  # Convert table to data frame
+  data_df <- as.data.frame(data)
+  
+  # Group by department and gender, summarize admissions
+  data_df %>%
+    group_by(Dept, Gender) %>%
+    summarise(Total_Admissions = sum(Freq[Admit == "Admitted"]))
+}
+
+# Use the function on UCBAdmissions
+data("UCBAdmissions")
+transform_ucb_data(UCBAdmissions)
+
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
